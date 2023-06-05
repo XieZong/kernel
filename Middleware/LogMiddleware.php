@@ -20,7 +20,7 @@ class LogMiddleware
                 'user_uuid' => user('uuid'),
                 'action' => base64_encode($uses),
                 'params' => $request->all(),
-                'status' => $response->getData(true)['result']
+                'status' => $response->getData(true)['result'] ?? 0
             ]);
         }
         return $response;
