@@ -9,7 +9,7 @@ class Generator
 {
     private static function generateData(): Collection
     {
-        return collect(config('kernel.path'))
+        return collect(config('kernel.path', []))
             ->map(fn($path, $namespace) => self::getPath($path)->map(function ($path) use ($namespace) {
                 $namespace = self::getNamespace($path, $namespace);
                 $full_path = base_path($path);
@@ -18,7 +18,7 @@ class Generator
                 return array_map(fn($item) => implode('\\', [$namespace, $item]), $file);
             })->collapse())
             ->collapse()
-            ->concat(config('kernel.register'))
+            ->concat(config('kernel.register', []))
             ->unique();
     }
 

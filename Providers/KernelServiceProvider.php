@@ -14,31 +14,26 @@ class KernelServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        require_once __DIR__ . '/../helper.php';
-
+        app()->withFacades();
+        app()->withEloquent();
+        app()->configure('kernel');
+        $this->mergeConfigFrom(__DIR__ . '/../config/kernel.php', 'kernel');
         app()->routeMiddleware([
             'auth' => Authenticate::class,
             'permission' => PermissionMiddleware::class,
             'log' => LogMiddleware::class,
         ]);
-
         app()->register(AuthServiceProvider::class);
-
-        app()->configure('kernel');
     }
 
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
-
-        $this->mergeConfigFrom(__DIR__ . '/../config/kernel.php', 'kernel');
-
+        $this->commands(KernelCommand::class);
         Generator::generateRoutesData()
             ->map(fn($route) => Route::post($route['uri'], [
                 'middleware' => $route['middleware'],
                 'uses' => $route['uses']
             ]));
-
-        $this->commands(KernelCommand::class);
     }
 }
