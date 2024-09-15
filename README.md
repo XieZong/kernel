@@ -43,3 +43,7 @@ $app->register(Kernel\Providers\KernelServiceProvider::class);
 ```
 $app->register(Kernel\Providers\KernelServiceProvider::class);
 ```
+- 更新composer
+```
+composer dumpautoload
+```
