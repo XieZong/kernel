@@ -4,11 +4,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoleUserTable extends Migration
-{
-    public string $table = 'role_user';
+return new class extends Migration {
+    private string $table = 'role_user';
 
-    public function up()
+    public function up(): void
     {
         Schema::create($this->table, function (Blueprint $table) {
             $table->uuid('user_uuid');
@@ -17,8 +16,8 @@ class CreateRoleUserTable extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists($this->table);
     }
-}
+};

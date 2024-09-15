@@ -4,24 +4,22 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLoginLogsTable extends Migration
-{
-    public string $table = 'login_logs';
+return new class extends Migration {
+    private string $table = 'login_logs';
 
-    public function up()
+    public function up(): void
     {
         Schema::create($this->table, function (Blueprint $table) {
             $table->id();
             $table->string('ip');
             $table->string('username');
-            $table->unsignedTinyInteger('status');
+            $table->boolean('status');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists($this->table);
     }
-}
+};
