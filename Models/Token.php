@@ -5,6 +5,9 @@ namespace Kernel\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Kernel\BaseModel;
 
+/**
+ * @property int|null exp_time 过期时间戳
+ */
 class Token extends BaseModel
 {
     public function user(): BelongsTo

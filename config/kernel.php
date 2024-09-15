@@ -5,6 +5,8 @@ return [
 
     'prefix' => env('KERNEL_PREFIX', 'api'),
 
+    'token_timeout' => env('KERNEL_TOKEN_TIMEOUT'),
+
     'register' => [
         Kernel\Routes\UserRoute::class,
         Kernel\Routes\RoleRoute::class,
