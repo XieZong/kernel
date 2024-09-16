@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Kernel\Models\User;
 
-class KernelCommand extends Command
+class KernelAdminCommand extends Command
 {
     protected $signature = 'kernel:admin';
 
@@ -15,15 +15,16 @@ class KernelCommand extends Command
 
     public function handle(): void
     {
-        if (!User::count()) {
+        if (!User::query()->count()) {
+            $username = head(admin());
             $password = Str::random();
-            User::create([
+            User::query()->create([
                 'name' => '管理员',
-                'username' => 'admin',
+                'username' => $username,
                 'password' => Hash::make($password),
                 'permissions' => [],
             ]);
-            $this->info('账号：admin 密码：' . $password);
+            $this->info("账号:{$username} 密码:{$password}");
         }
     }
 }

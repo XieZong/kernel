@@ -39,7 +39,7 @@ class User extends BaseModel
     public function isAdmin(): Attribute
     {
         return Attribute::make(
-            get: fn() => in_array($this->username, explode('|', config('kernel.admin')))
+            get: fn() => in_array($this->username, admin())
         );
     }
 

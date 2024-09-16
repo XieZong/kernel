@@ -24,3 +24,8 @@ function user($attribute = null, $default = null)
     $value = $user->{$attribute};
     return is_null($value) ? value($default) : $value;
 }
+
+function admin(): array
+{
+    return explode('|', config('kernel.admin'));
+}

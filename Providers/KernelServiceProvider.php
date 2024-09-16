@@ -4,7 +4,7 @@ namespace Kernel\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Kernel\Commands\KernelCommand;
+use Kernel\Commands\KernelAdminCommand;
 use Kernel\Generator;
 use Kernel\Middleware\Authenticate;
 use Kernel\Middleware\LogMiddleware;
@@ -29,7 +29,7 @@ class KernelServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
-        $this->commands(KernelCommand::class);
+        $this->commands(KernelAdminCommand::class);
         Generator::generateRoutesData()
             ->map(fn($route) => Route::post($route['uri'], [
                 'middleware' => $route['middleware'],
