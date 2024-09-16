@@ -7,6 +7,7 @@ use Kernel\BaseModel;
 
 /**
  * @property int|null exp_time 过期时间戳
+ * @property User|null user User Model
  */
 class Token extends BaseModel
 {
