@@ -24,7 +24,7 @@ class KernelAdminCommand extends Command
                 'password' => Hash::make($password),
                 'permissions' => [],
             ]);
-            $this->info("账号:{$username} 密码:{$password}");
+            $this->info("账号:$username 密码:$password");
         }
     }
 }
