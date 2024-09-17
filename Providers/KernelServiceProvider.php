@@ -31,7 +31,7 @@ class KernelServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
         $this->commands(KernelAdminCommand::class);
         Generator::generateRoutesData()
-            ->map(fn($route) => Route::post($route['uri'], [
+            ->each(fn($route) => Route::post($route['uri'], [
                 'middleware' => $route['middleware'],
                 'uses' => $route['uses']
             ]));

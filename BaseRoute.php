@@ -37,10 +37,7 @@ abstract class BaseRoute
     {
         $instance = new ReflectionClass(self::$instance);
         self::$routes = collect($instance->getMethods())
-            ->filter(function (ReflectionMethod $method) {
-                if (!$method->getReturnType()) return false;
-                return $method->getReturnType()->getName() === Route::class;
-            })
+            ->filter(fn(ReflectionMethod $method) => $method->getReturnType()?->getName() === Route::class)
             ->map(fn(ReflectionMethod $method) => call_user_func($method->invoke($method->isStatic() ? null : self::$instance)));
     }
 
