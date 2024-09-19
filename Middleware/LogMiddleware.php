@@ -16,9 +16,9 @@ class LogMiddleware
         if ($response->getStatusCode() === 200) {
             $route = $request->route();
             $uses = Arr::get($route[1], 'uses');
-            UserLog::create([
+            UserLog::query()->create([
                 'user_uuid' => user('uuid'),
-                'action' => base64_encode($uses),
+                'action' => permission($uses),
                 'params' => $request->all(),
                 'status' => $response->getData(true)['result'] ?? 0
             ]);

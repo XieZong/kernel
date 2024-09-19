@@ -13,7 +13,7 @@ class PermissionMiddleware
         $permissions = user('all_permissions');
         $route = $request->route();
         $uses = Arr::get($route[1], 'uses');
-        if ($permissions->contains(base64_encode($uses))) return $next($request);
+        if ($permissions->contains(permission($uses))) return $next($request);
         return json(false, '没有操作权限', 403);
     }
 }
