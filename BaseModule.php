@@ -9,13 +9,14 @@ trait BaseModule
 {
     protected function module(): void
     {
-        $this->module = self::getModule();
-        $this->module_name = self::getModuleName();
+        $reflection = new ReflectionClass($this);
+        $this->module = self::getModule($reflection);
+        $this->module_name = self::getModuleName($reflection);
+        $this->module_sort = self::getModuleSort($reflection);
     }
 
-    private static function getModule(): string
+    private static function getModule($instance): string
     {
-        $instance = new ReflectionClass(__CLASS__);
         if ($module = $instance->getConstant('MODULE')) return $module;
         $trait = collect($instance->getTraits())->first(fn(ReflectionClass $trait) => in_array(__TRAIT__, array_keys($trait->getTraits())));
         $module = class_basename($trait->name);
@@ -23,11 +24,16 @@ trait BaseModule
         return Str::snake($module);
     }
 
-    private static function getModuleName(): string
+    private static function getModuleName($instance): string
     {
-        $instance = new ReflectionClass(__CLASS__);
         if ($name = $instance->getConstant('MODULE_NAME')) return $name;
         $trait = collect($instance->getTraits())->first(fn(ReflectionClass $trait) => in_array(__TRAIT__, array_keys($trait->getTraits())));
         return class_basename($trait->name);
+    }
+
+    private static function getModuleSort($instance): int
+    {
+        if ($sort = $instance->getConstant('MODULE_SORT')) return $sort;
+        else return self::$sort;
     }
 }

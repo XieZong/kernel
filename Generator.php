@@ -54,7 +54,7 @@ class Generator
         /**
          * @var BaseRoute $route
          */
-        return self::modularization(self::generateData()->map(fn($route) => $route::generatePermissionData())->collapse());
+        return self::modularization(self::generateData()->map(fn($route) => $route::generatePermissionData()));
     }
 
     public static function generateApisData(): Collection
@@ -62,7 +62,7 @@ class Generator
         /**
          * @var BaseRoute $route
          */
-        return self::modularization(self::generateData()->map(fn($route) => $route::generateApiData())->collapse());
+        return self::modularization(self::generateData()->map(fn($route) => $route::generateApiData()));
     }
 
     public static function generateLogsData(): Collection
@@ -70,38 +70,23 @@ class Generator
         /**
          * @var BaseRoute $route
          */
-        return self::generateData()->map(fn($route) => $route::generateLogData())->collapse();
+        return self::generateData()
+            ->sortBy(fn($route) => $route::$sort)
+            ->map(fn($route) => $route::generateLogData())
+            ->collapse();
     }
 
     private static function modularization(Collection $data): Collection
     {
-        $module = $data
-            ->filter(fn($item) => $item['module'])
-            ->groupBy('module')
+        return $data
+            ->groupBy(fn($item) => $item['module_sort'] . '#' . $item['module'])
+            ->sortKeys(SORT_NATURAL)
             ->map(fn($item, $key) => [
-                'label' => $key,
-                'children' => $item->groupBy('name')->map(fn($item, $key) => [
-                    'label' => $key,
-                    'children' => $item->map(fn($item) => [
-                        'label' => $item['label'],
-                        'value' => $item['value'],
-                        'request' => $item['request'] ?? [],
-                        'response' => $item['response'] ?? []
-                    ])
-                ])->values(),
-            ]);
-        $route = $data
-            ->filter(fn($item) => !$item['module'])
-            ->groupBy('name')
-            ->map(fn($item, $key) => [
-                'label' => $key,
-                'children' => $item->map(fn($item) => [
+                'label' => Str::after($key, '#'),
+                'children' => $item->sortBy('sort')->map(fn($item) => [
                     'label' => $item['label'],
-                    'value' => $item['value'],
-                    'request' => $item['request'] ?? [],
-                    'response' => $item['response'] ?? []
-                ])
-            ]);
-        return $module->concat($route)->values();
+                    'children' => $item['children'],
+                ])->values(),
+            ])->values();
     }
 }

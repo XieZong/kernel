@@ -8,6 +8,7 @@ use Kernel\Route;
 
 class DevtoolRoute extends BaseRoute
 {
+    public static int $sort = 30;
     protected static string $name = '开发工具';
     protected static string $controller = DevtoolController::class;
 

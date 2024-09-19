@@ -11,7 +11,9 @@ abstract class BaseRoute
 {
     protected string $module;
     protected string $module_name;
+    protected int $module_sort;
 
+    public static int $sort = 10;
     protected static string $name;
     protected static string $prefix;
     protected static string $controller;
@@ -23,7 +25,7 @@ abstract class BaseRoute
 
     private static function boot(): void
     {
-        self::$instance = new static();
+        self::$instance = new static;
         self::loadModule();
         self::loadRoute();
     }
@@ -55,28 +57,35 @@ abstract class BaseRoute
     public final static function generatePermissionData(): Collection
     {
         self::boot();
-        return static::$routes
-            ->filter(fn($route) => in_array('permission', $route['middleware'] ?? static::$middleware))
-            ->map(fn($route) => [
-                'label' => $route['label'],
-                'value' => base64_encode(implode('@', [static::$controller, $route['path']])),
-                'name' => self::getName(),
-                'module' => self::getModuleName()
-            ]);
+        return collect([
+            'label' => self::getName(),
+            'sort' => static::$sort,
+            'module' => self::getModuleName(),
+            'module_sort' => self::getModuleSort(),
+            'children' => static::$routes
+                ->filter(fn($route) => in_array('permission', $route['middleware'] ?? static::$middleware))
+                ->map(fn($route) => [
+                    'label' => $route['label'],
+                    'value' => permission(implode('@', [static::$controller, $route['path']]))
+                ])->values()
+        ]);
     }
 
     public final static function generateApiData(): Collection
     {
         self::boot();
-        return static::$routes
-            ->map(fn($route) => [
+        return collect([
+            'label' => self::getName(),
+            'sort' => static::$sort,
+            'module' => self::getModuleName(),
+            'module_sort' => self::getModuleSort(),
+            'children' => static::$routes->map(fn($route) => [
                 'label' => $route['label'],
                 'value' => self::getRouteUri($route['path']),
-                'name' => self::getName(),
-                'module' => self::getModuleName(),
                 'request' => $route['request'] ?? [],
                 'response' => $route['response'] ?? [],
-            ]);
+            ])
+        ]);
     }
 
     public final static function generateLogData(): Collection
@@ -85,8 +94,8 @@ abstract class BaseRoute
         return static::$routes
             ->filter(fn($route) => in_array('log', $route['middleware'] ?? static::$middleware))
             ->map(fn($route) => [
-                'label' => implode('-', array_filter([self::getModuleName(), self::getName(), $route['label']])),
-                'value' => base64_encode(implode('@', [static::$controller, $route['path']])),
+                'label' => implode(' - ', [self::getModuleName(), self::getName(), $route['label']]),
+                'value' => permission(implode('@', [static::$controller, $route['path']])),
             ]);
     }
 
@@ -128,6 +137,11 @@ abstract class BaseRoute
 
     private static function getModuleName(): string
     {
-        return self::$instance->module_name ?? '';
+        return self::$instance->module_name ?? self::getName();
+    }
+
+    private static function getModuleSort(): int
+    {
+        return self::$instance->module_sort ?? static::$sort;
     }
 }

@@ -29,3 +29,8 @@ function admin(): array
 {
     return explode('|', config('kernel.admin'));
 }
+
+function permission($value): string
+{
+    return base64_encode(md5($value));
+}
