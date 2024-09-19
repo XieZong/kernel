@@ -57,35 +57,23 @@ abstract class BaseRoute
     public final static function generatePermissionData(): Collection
     {
         self::boot();
-        return collect([
-            'label' => self::getName(),
-            'sort' => static::$sort,
-            'module' => self::getModuleName(),
-            'module_sort' => self::getModuleSort(),
-            'children' => static::$routes
-                ->filter(fn($route) => in_array('permission', $route['middleware'] ?? static::$middleware))
-                ->map(fn($route) => [
-                    'label' => $route['label'],
-                    'value' => permission(implode('@', [static::$controller, $route['path']]))
-                ])->values()
-        ]);
+        return self::generateModuleData(static::$routes
+            ->filter(fn($route) => in_array('permission', $route['middleware'] ?? static::$middleware))
+            ->map(fn($route) => [
+                'label' => $route['label'],
+                'value' => permission(implode('@', [static::$controller, $route['path']]))
+            ])->values());
     }
 
     public final static function generateApiData(): Collection
     {
         self::boot();
-        return collect([
-            'label' => self::getName(),
-            'sort' => static::$sort,
-            'module' => self::getModuleName(),
-            'module_sort' => self::getModuleSort(),
-            'children' => static::$routes->map(fn($route) => [
-                'label' => $route['label'],
-                'value' => self::getRouteUri($route['path']),
-                'request' => $route['request'] ?? [],
-                'response' => $route['response'] ?? [],
-            ])
-        ]);
+        return self::generateModuleData(static::$routes->map(fn($route) => [
+            'label' => $route['label'],
+            'value' => self::getRouteUri($route['path']),
+            'request' => $route['request'] ?? [],
+            'response' => $route['response'] ?? [],
+        ]));
     }
 
     public final static function generateLogData(): Collection
@@ -126,6 +114,17 @@ abstract class BaseRoute
         $prefix = class_basename(static::class);
         $prefix = str_replace('Route', '', $prefix);
         return Str::snake($prefix);
+    }
+
+    private static function generateModuleData(array|Collection $data): Collection
+    {
+        return collect([
+            'label' => self::getName(),
+            'sort' => static::$sort,
+            'module' => self::getModuleName(),
+            'module_sort' => self::getModuleSort(),
+            'children' => $data
+        ]);
     }
 
     private static function getName(): string
