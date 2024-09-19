@@ -2,6 +2,7 @@
 
 namespace Kernel\Controllers;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -29,8 +30,10 @@ class UserController extends BaseController
 
         $user = User::where('username', request('username'))->first();
         $result = $user && Hash::check(request('password'), $user->password);
+        $timeout = config('kernel.token_timeout');
+        $exp_time = $timeout ? Carbon::now()->add($timeout)->timestamp : null;
         LoginLog::create(['ip' => request()->ip(), 'username' => request('username'), 'status' => $result]);
-        if ($result) return json()->data($user->createToken());
+        if ($result) return json()->data($user->createToken($exp_time));
         return json(false, '账号密码错误');
     }
 
