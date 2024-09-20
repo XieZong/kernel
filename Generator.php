@@ -3,10 +3,16 @@
 namespace Kernel;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Generator
 {
+    const KERNEL_CACHE_ROUTE = 'kernel-cache-route';
+    const KERNEL_CACHE_PERMISSION = 'kernel-cache-permission';
+    const KERNEL_CACHE_API = 'kernel-cache-api';
+    const KERNEL_CACHE_LOG = 'kernel-cache-log';
+
     private static function generateData(): Collection
     {
         return collect(config('kernel.path', []))
@@ -46,7 +52,10 @@ class Generator
         /**
          * @var BaseRoute $route
          */
-        return self::generateData()->map(fn($route) => $route::generateRouteData())->collapse();
+        return Cache::get(
+            self::KERNEL_CACHE_ROUTE,
+            fn() => self::generateData()->map(fn($route) => $route::generateRouteData())->collapse()
+        );
     }
 
     public static function generatePermissionsData(): Collection
@@ -54,7 +63,10 @@ class Generator
         /**
          * @var BaseRoute $route
          */
-        return self::modularization(self::generateData()->map(fn($route) => $route::generatePermissionData()));
+        return Cache::get(
+            self::KERNEL_CACHE_PERMISSION,
+            fn() => self::modularization(self::generateData()->map(fn($route) => $route::generatePermissionData()))
+        );
     }
 
     public static function generateApisData(): Collection
@@ -62,7 +74,10 @@ class Generator
         /**
          * @var BaseRoute $route
          */
-        return self::modularization(self::generateData()->map(fn($route) => $route::generateApiData()));
+        return Cache::get(
+            self::KERNEL_CACHE_API,
+            fn() => self::modularization(self::generateData()->map(fn($route) => $route::generateApiData()))
+        );
     }
 
     public static function generateLogsData(): Collection
@@ -70,10 +85,13 @@ class Generator
         /**
          * @var BaseRoute $route
          */
-        return self::generateData()
-            ->sortBy(fn($route) => $route::$sort)
-            ->map(fn($route) => $route::generateLogData())
-            ->collapse();
+        return Cache::get(
+            self::KERNEL_CACHE_LOG,
+            fn() => self::generateData()
+                ->sortBy(fn($route) => $route::$sort)
+                ->map(fn($route) => $route::generateLogData())
+                ->collapse()
+        );
     }
 
     private static function modularization(Collection $data): Collection
