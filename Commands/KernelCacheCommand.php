@@ -10,7 +10,7 @@ class KernelCacheCommand extends Command
 {
     protected $signature = 'kernel:cache {--C|clear : 清理缓存}';
 
-    protected $description = '缓存 kernel 数据';
+    protected $description = '缓存核心数据';
 
     public function handle(): void
     {
