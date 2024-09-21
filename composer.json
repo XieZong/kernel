@@ -1,5 +1,13 @@
 {
   "name": "xiezong/kernel",
+  "description": "lumen扩展包",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "XieZong",
+      "email": "736227558@qq.com"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Kernel\\": ""
