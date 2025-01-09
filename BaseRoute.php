@@ -73,7 +73,7 @@ abstract class BaseRoute
             'value' => self::getRouteUri($route['path']),
             'request' => $route['request'] ?? [],
             'response' => $route['response'] ?? [],
-        ]));
+        ])->values());
     }
 
     public final static function generateLogData(): Collection
