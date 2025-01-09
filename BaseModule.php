@@ -34,6 +34,6 @@ trait BaseModule
     private static function getModuleSort($instance): int
     {
         if ($sort = $instance->getConstant('MODULE_SORT')) return $sort;
-        else return self::$sort;
+        else return 10;
     }
 }
