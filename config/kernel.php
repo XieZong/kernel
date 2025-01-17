@@ -7,6 +7,8 @@ return [
 
     'token_timeout' => env('KERNEL_TOKEN_TIMEOUT'),
 
+    'auth_user_model' => Kernel\Models\User::class,
+
     'register' => [
         Kernel\Routes\UserRoute::class,
         Kernel\Routes\RoleRoute::class,

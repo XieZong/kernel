@@ -13,7 +13,7 @@ class Token extends BaseModel
 {
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(config('kernel.auth_user_model'));
     }
 
     public function valid(): bool
