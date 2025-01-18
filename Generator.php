@@ -19,7 +19,7 @@ class Generator
             ->map(fn($path, $namespace) => self::getPath($path)->map(function ($path) use ($namespace) {
                 $namespace = self::getNamespace($path, $namespace);
                 $full_path = base_path($path);
-                $dir = scandir($full_path);
+                $dir = is_dir($full_path) ? scandir($full_path) : [];
                 $file = array_filter(array_map(fn($item) => str_replace(['.php', '.'], '', $item), $dir));
                 return array_map(fn($item) => implode('\\', [$namespace, $item]), $file);
             })->collapse())
