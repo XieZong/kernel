@@ -97,6 +97,7 @@ class Generator
     private static function modularization(Collection $data): Collection
     {
         return $data
+            ->filter(fn($item) => $item['children']->isNotEmpty())
             ->groupBy(fn($item) => $item['module_sort'] . '#' . $item['module'])
             ->sortKeys(SORT_NATURAL)
             ->map(fn($item, $key) => [
